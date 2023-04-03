@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Healthcare API Tracker</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        header {
+            background-color: #0072c6;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            margin: 0;
+        }
+        
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px;
+        }
+        
+        .card {
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            margin: 10px;
+            padding: 20px;
+            text-align: center;
+            width: 300px;
+        }
+        
+        .card h2 {
+            margin-top: 0;
+        }
+        
+        .card img {
+            max-width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Healthcare API Tracker</h1>
+    </header>
+    <div class="container">
+        <div class="card">
+            <h2>Drug search API</h2>
+            <img src="https://www.fda.gov/files/styles/featured_content_background_image/public/2020-03/FDA%20logo%20for%20web.png?h=8c7d7d3c&itok=JZJZJZJZ" alt="Drug search logo">
+            <p>Enter a drug name to search:</p>
+            <input type="text" id="drugName">
+            <button onclick="searchDrug()">Search</button>
+            <div id="drugResults"></div>
+        </div>
+        <div class="card">
+            <h2>COVID-19 API</h2>
+            <img src="https://www.who.int/images/default-source/health-topics/coronavirus/coronavirus2.jpg?sfvrsn=4d657bc3_30" alt="COVID-19 image">
+            <p>Enter a country name to search:(example:Canada)</p>
+            <input type="text" id="countryName">
+            <button onclick="searchCountry()">Search</button>
+            <div id="countryResults"></div>
+        </div>
+    </div>
+
+    <script>
+        function searchDrug() {
+            var drugName = $('#drugName').val();
+            var url = 'https://api.fda.gov/drug/event.json?search=patient.drug.medicinalproduct:' + drugName;
+            $.getJSON(url, function(data) {
+                var results = data.results;
+                var html = '<ul>';
+                $.each(results, function(index, result) {
+                    html += '<li>' + result.patient.reaction[0].reactionmeddrapt + '</li>';
+                });
+                html += '</ul>';
+                $('#drugResults').html(html);
+            });
+        }
+
+        function searchCountry() {
+            var countryName = $('#countryName').val();
+            var url = 'https://api.covid19api.com/total/country/' + countryName;
+            $.getJSON(url, function(data) {
+                var results = data[data.length - 1];
+                var html = '<ul>';
+                html += '<li>Confirmed Cases: ' + results.Confirmed + '</li>';
+                html += '<li>Deaths: ' + results.Deaths + '</li>';
+                html += '<li>Recovered: ' + results.Recovered + '</li>';
+                html += '</ul>';
+                $('#countryResults').html(html);
+            });
+        }
+    </script>
+</body>
+
+</html>
